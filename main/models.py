@@ -4,7 +4,8 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class Vocabulary(models.Model):
-    word = models.ForeignKey(User, on_delete=models.CASCADE, related_name="voc", null=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="voc", null=False)
+    word = models.TextField()
 
     def __str__(self) -> str:
         return self.word
