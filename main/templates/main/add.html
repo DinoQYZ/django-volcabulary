@@ -1,0 +1,25 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Create an Account{% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h3>Add new vocabulary</h3>
+
+    <form method="post" action="/add/" class="form-group">
+        {% csrf_token %}
+        <input type="text" name="vocabulary" class="" placeholder="Enter new vocabulary" required><br><br>
+        <div class="input-group mb-3">
+                <input type="text" name="translations[]" class="" placeholder="translation" required>&emsp;
+                <input type="text" name="wd_types[]" class="" placeholder="word type" required>&emsp;
+                <button type="button" class="btn btn-danger btn-sm">Remove</button>&emsp;
+                <button type="button" class="btn btn-warning btn-sm">Add</button>
+            <br>
+        </div>
+        <button type="submit" class="btn btn-success">Confirm</button>
+    </form>
+{% endblock %}
+
+<script>
+    
+</script>

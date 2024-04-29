@@ -4,6 +4,26 @@
 
 {% block content %}
 
-<h1>Home page</h1>
+<h3>
+    Vocabulary List 
+    <a href="/add" class="btn btn-outline-secondary btn-sm">Add</a>
+</h3>
+
+
+<table class="table">
+    {% for vocabulary in user.voc.all %}
+    <tr>
+        <th scope="row">{{ forloop.counter }}</th>
+        <td>{{vocabulary.word}}</td>
+        <td>
+            <ul>
+                {% for translation in vocabulary.translation_set.all %}
+                <li>{{ translation.trans }} {{ translation.wd_type }}</li>
+                {% endfor %}
+            </ul>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
 
 {% endblock %}
