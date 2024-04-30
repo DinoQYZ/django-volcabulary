@@ -11,6 +11,7 @@ def add(response):
     if response.method == 'POST':
         form = VocabularyForm(response.POST)
         if form.is_valid():
+            form.instance.user = response.user
             vocabulary = form.save()
             for i, translation_text in enumerate(response.POST.getlist('translations[]')):
                 wd_type = response.POST.getlist('wd_types[]')[i]

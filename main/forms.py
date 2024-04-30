@@ -6,7 +6,7 @@ class VocabularyForm(forms.ModelForm):
 
     class Meta:
         model = Vocabulary
-        fields = ['vocabulary']
+        fields = ['word']
 
     translations = forms.CharField(widget=forms.HiddenInput(), required=False)
 
