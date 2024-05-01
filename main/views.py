@@ -12,12 +12,15 @@ def add(response):
         form = VocabularyForm(response.POST)
         if form.is_valid():
             form.instance.user = response.user
-            vocabulary = form.save()
-            for i, translation_text in enumerate(response.POST.getlist('translations[]')):
-                wd_type = response.POST.getlist('wd_types[]')[i]
-                Translation.objects.create(vocabulary=vocabulary, trans=translation_text, wd_type=wd_type)
+            vocabulary = form.save(commit=False) 
+            vocabulary.save() 
+            translations_data = form.cleaned_data.get('translations')
+            if translations_data:
+                for line in translations_data.split("\n"):
+                    trans, wd_type = line.split(',')
+                    vocabulary.translation_set.create(trans=trans.strip(), wd_type=wd_type.strip())
             return render(response, 'main/home.html', {})
-
+        
     else:
         form = VocabularyForm()
 
