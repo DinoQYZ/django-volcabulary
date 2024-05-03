@@ -4,11 +4,32 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-    <h3>Edit vocabulary - "{{ vocabulary }}"</h3>
-    {% if err_msg %}
-        <p class="alert alert-danger" role="alert">{{ err_msg }}</p>
+    <h3>Edit vocabulary - "{{ vocabulary.word }}"</h3>
+    {% if msg %}
+        <p class="alert alert-success" role="alert">{{ msg }}</p>
     {% endif %}
-    <form id="editForm" method="post" action="/editVocabulary/{{ id }}/" class="form-group">
+
+    <table class="table">
+        {% for translation in translations %}
+        <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>
+                {{ translation.wd_type }}
+            </td>
+            <td>
+                {{ translation.trans }}
+            </td>
+            <td>
+                <form action="{% url 'deleteTranslation' translation.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <form id="editForm" method="post" action="/editVocabulary/{{ vocabulary.id }}/" class="form-group">
         {% csrf_token %}
         <br><br>
         <input type="text" name="translation" class="" placeholder="enter translation" required> &ensp;

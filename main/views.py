@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import VocabularyForm, TranslationForm
-from .models import Vocabulary
+from .models import Vocabulary, Translation
 
 # Create your views here.
 
@@ -28,6 +28,7 @@ def addVocabulary(response):
 
 def editVocabulary(response, id):
     vocabulary = get_object_or_404(Vocabulary, id=id)
+    translation = Translation.objects.filter(voc=vocabulary)
     if response.method == 'POST':
         form = TranslationForm(response.POST)
         if form.is_valid():
@@ -41,10 +42,17 @@ def editVocabulary(response, id):
     else:
         form = TranslationForm()
 
-    return render(response, 'main/editVocabulary.html', {'form': form, 'vocabulary': vocabulary.word, 'id': id})
+    return render(response, 'main/editVocabulary.html', {'form': form, 'vocabulary': vocabulary, 'translations': translation})
 
 def deleteVocabulary(response, id):
     vocabulary = get_object_or_404(Vocabulary, id=id)
     msg = f'Successfully delete \"{vocabulary.word}\"'
     vocabulary.delete()
     return render(response, 'main/home.html', {'msg': msg})
+
+def deleteTranslation(response, translation_id):
+    translation = get_object_or_404(Translation, id=translation_id)
+    id = translation.voc.id 
+    msg = f'Successfully delete \"{translation.voc} - {translation.trans}\"'
+    translation.delete()
+    return render(response, 'main/home.html', {'id':id, 'msg': msg})
