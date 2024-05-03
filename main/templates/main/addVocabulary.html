@@ -1,0 +1,16 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Create an Account{% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h3>Add new vocabulary</h3>
+    {% if err_msg %}
+        <p class="alert alert-danger" role="alert">{{ err_msg }}</p>
+    {% endif %}
+    <form id="addForm" method="post" action="/addVocabulary/" class="form-group">
+        {% csrf_token %}
+        <input type="text" name="word" class="" placeholder="Enter new vocabulary" required><br><br>
+        <button type="submit" id="submit" class="btn btn-success">Submit</button>
+    </form>
+{% endblock %}

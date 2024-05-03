@@ -1,27 +1,50 @@
-from django.shortcuts import render
-from .forms import VocabularyForm
-from .models import Vocabulary, Translation
+from django.shortcuts import render, get_object_or_404, redirect
+from .forms import VocabularyForm, TranslationForm
+from .models import Vocabulary
 
 # Create your views here.
 
 def home(response):
     return render(response, "main/home.html", {})
 
-def add(response):
+def addVocabulary(response):
     if response.method == 'POST':
         form = VocabularyForm(response.POST)
         if form.is_valid():
-            form.instance.user = response.user
-            vocabulary = form.save(commit=False) 
-            vocabulary.save() 
-            translations_data = form.cleaned_data.get('translations')
-            if translations_data:
-                for line in translations_data.split("\n"):
-                    trans, wd_type = line.split(',')
-                    vocabulary.translation_set.create(trans=trans.strip(), wd_type=wd_type.strip())
-            return render(response, 'main/home.html', {})
+            if Vocabulary.objects.filter(word=form.cleaned_data['word']).exists():
+                return render(response, 'main/addVocabulary.html', {'form': form, 'err_msg': 'Vocabulary already exists!'})
+
+            else:
+                form.instance.user = response.user
+                vocabulary = form.save(commit=False)
+                msg = f'Successfully add \"{vocabulary.word}\"'
+                vocabulary.save()
+                return render(response, 'main/home.html', {'msg': msg})
         
     else:
         form = VocabularyForm()
 
-    return render(response, 'main/add.html', {'form': form})
+    return render(response, 'main/addVocabulary.html', {'form': form})
+
+def editVocabulary(response, id):
+    vocabulary = get_object_or_404(Vocabulary, id=id)
+    if response.method == 'POST':
+        form = TranslationForm(response.POST)
+        if form.is_valid():
+            translation = form.cleaned_data['translation']
+            wd_type = form.cleaned_data['wd_type']
+            vocabulary.translation_set.create(trans=translation, wd_type=wd_type)
+            msg = f'Successfully update \"{vocabulary.word}\"'
+            return render(response, 'main/home.html', {'msg': msg})
+        else:
+            form = TranslationForm()
+    else:
+        form = TranslationForm()
+
+    return render(response, 'main/editVocabulary.html', {'form': form, 'vocabulary': vocabulary.word, 'id': id})
+
+def deleteVocabulary(response, id):
+    vocabulary = get_object_or_404(Vocabulary, id=id)
+    msg = f'Successfully delete \"{vocabulary.word}\"'
+    vocabulary.delete()
+    return render(response, 'main/home.html', {'msg': msg})

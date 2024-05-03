@@ -6,9 +6,12 @@
 
 <h3>
     Vocabulary List 
-    <a href="/add" class="btn btn-outline-secondary btn-sm">Add</a>
+    <a href="/addVocabulary" class="btn btn-outline-secondary btn-sm">Add</a>
 </h3>
 
+{% if msg %}
+    <p class="alert alert-success" role="alert">{{ msg }}</p>
+{% endif %}
 
 <table class="table">
     {% for vocabulary in user.voc.all %}
@@ -21,6 +24,18 @@
                 <li>{{ translation.trans }} {{ translation.wd_type }}</li>
                 {% endfor %}
             </ul>
+        </td>
+        <td>
+            <form action="{% url 'editVocabulary' vocabulary.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-info">Edit</button>
+            </form>
+        </td>
+        <td>
+            <form action="{% url 'deleteVocabulary' vocabulary.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline-danger">Delete</button>
+            </form>
         </td>
     </tr>
     {% endfor %}
