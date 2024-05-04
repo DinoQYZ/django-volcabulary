@@ -1,3 +1,4 @@
+import random
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import VocabularyForm, TranslationForm
 from .models import Vocabulary, Translation
@@ -28,13 +29,13 @@ def addVocabulary(response):
 
 def editVocabulary(response, id):
     vocabulary = get_object_or_404(Vocabulary, id=id)
-    translation = Translation.objects.filter(voc=vocabulary)
+    translations = Translation.objects.filter(voc=vocabulary)
     if response.method == 'POST':
         form = TranslationForm(response.POST)
         if form.is_valid():
-            translation = form.cleaned_data['translation']
+            translations = form.cleaned_data['translation']
             wd_type = form.cleaned_data['wd_type']
-            vocabulary.translation_set.create(trans=translation, wd_type=wd_type)
+            vocabulary.translation_set.create(trans=translations, wd_type=wd_type)
             msg = f'Successfully update \"{vocabulary.word}\"'
             return render(response, 'main/home.html', {'msg': msg})
         else:
@@ -42,7 +43,7 @@ def editVocabulary(response, id):
     else:
         form = TranslationForm()
 
-    return render(response, 'main/editVocabulary.html', {'form': form, 'vocabulary': vocabulary, 'translations': translation})
+    return render(response, 'main/editVocabulary.html', {'form': form, 'vocabulary': vocabulary, 'translations': translations})
 
 def deleteVocabulary(response, id):
     vocabulary = get_object_or_404(Vocabulary, id=id)
@@ -56,3 +57,11 @@ def deleteTranslation(response, translation_id):
     msg = f'Successfully delete \"{translation.voc} - {translation.trans}\"'
     translation.delete()
     return render(response, 'main/home.html', {'id':id, 'msg': msg})
+
+def randomVocabulary(response):
+    vocabularies = Vocabulary.objects.all()
+
+    vocabulary = random.choice(vocabularies)
+    translations = vocabulary.translation_set.all()
+
+    return render(response, 'main/random.html', {'vocabulary': vocabulary, 'translations': translations})

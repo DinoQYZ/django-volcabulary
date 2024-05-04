@@ -1,0 +1,25 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Random vocabulary{% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h3>Random vocabulary</h3>
+    
+    <br>
+    <h4>{{ vocabulary.word }}</h4>
+    <table class="table">
+        {% for translation in translations %}
+        <tr>
+            <th scope="row">{{ forloop.counter }}</th>
+            <td>
+                {{ translation.wd_type }}
+            </td>
+            <td>
+                {{ translation.trans }}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+{% endblock %}
